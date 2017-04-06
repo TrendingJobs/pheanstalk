@@ -1,5 +1,5 @@
 {
-    "name": "trendingjobs/pheanstalk",
+    "name": "pda/pheanstalk",
     "type": "library",
     "description": "PHP client for beanstalkd queue",
     "keywords": ["beanstalkd"],

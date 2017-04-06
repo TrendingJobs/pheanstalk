@@ -73,12 +73,25 @@ class Job
      * 
      * @param \Pheanstalk\DataHandlerInterface $dataHandler
      */
-    static public function setDataHander(DataHandlerInterface $dataHandler)
+    static public function addDataHandler(DataHandlerInterface $dataHandler)
     {
         if (!self::$_dataHandler) {
             self::$_dataHandler = new \SplObjectStorage;
         }
         
         self::$_dataHandler->attach($dataHandler);
+    }
+
+    /**
+     * Sets a custom class that handles data encoding/decoding
+     *
+     * This can be useful, to compress or seperate data storage
+     * from the queue, in order to reduce memory usage
+     *
+     * @param \Pheanstalk\DataHandlerInterface $dataHandler
+     */
+    public static function removeDataHandler(DataHandlerInterface $dataHandler)
+    {
+        self::$_dataHandler->detach($dataHandler);
     }
 }
