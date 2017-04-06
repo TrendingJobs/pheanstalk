@@ -49,6 +49,11 @@ class DeleteCommand
             ));
         }
 
+        // expire all handlers
+        foreach ($this->_job->getDataHandlers() as $handler) {
+            $handler->expire();
+        }
+        
         return $this->_createResponse($responseLine);
     }
 }

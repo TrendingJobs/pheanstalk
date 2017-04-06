@@ -75,15 +75,12 @@ class Job
      */
     static public function addDataHandler(DataHandlerInterface $dataHandler)
     {
-        if (!self::$_dataHandler) {
-            self::$_dataHandler = new \SplObjectStorage;
-        }
-        
-        self::$_dataHandler->attach($dataHandler);
+        self::getDataHandlers()->attach($dataHandler);
+        return self;
     }
 
     /**
-     * Sets a custom class that handles data encoding/decoding
+     * Removes a custom class that handles data encoding/decoding
      *
      * This can be useful, to compress or seperate data storage
      * from the queue, in order to reduce memory usage
@@ -92,6 +89,23 @@ class Job
      */
     public static function removeDataHandler(DataHandlerInterface $dataHandler)
     {
-        self::$_dataHandler->detach($dataHandler);
+        self::getDataHandlers()->detach($dataHandler);
+        return self;
+    }
+
+    /**
+     * Gets currently registered handlers data encoding/decoding
+     *
+     * This can be useful, to compress or seperate data storage
+     * from the queue, in order to reduce memory usage
+     *
+     * @return \Pheanstalk\DataHandlerInterface $dataHandler[]
+     */
+    static public function getDataHandlers()
+    {
+        if (!self::$_dataHandler) {
+            self::$_dataHandler = new \SplObjectStorage;
+        }
+        return self::$_dataHandler;
     }
 }
