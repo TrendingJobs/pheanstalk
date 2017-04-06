@@ -21,6 +21,7 @@ class Pheanstalk implements PheanstalkInterface
     private $_connection;
     private $_using = PheanstalkInterface::DEFAULT_TUBE;
     private $_watching = array(PheanstalkInterface::DEFAULT_TUBE => true);
+    private $_dataHandler;
 
     /**
      * @param string $host
@@ -28,9 +29,35 @@ class Pheanstalk implements PheanstalkInterface
      * @param int    $connectTimeout
      * @param bool   $connectPersistent
      */
-    public function __construct($host, $port = PheanstalkInterface::DEFAULT_PORT, $connectTimeout = null, $connectPersistent = false)
+    public function __construct($host, $port = PheanstalkInterface::DEFAULT_PORT, $connectTimeout = null, $connectPersistent = false, DataHander $handler = null)
     {
-        $this->setConnection(new Connection($host, $port, $connectTimeout, $connectPersistent));
+        $this->setsetConnection(new Connection($host, $port, $connectTimeout, $connectPersistent));
+        $this->setDataHandler($handler);
+    }
+
+    /**
+     * Sets a data handler instance
+     * 
+     * @param \Pheanstalk\DataHandler $handler
+     * @return self
+     */
+    public function setDataHandler(DataHandler $handler = null)
+    {
+        if (!$handler) {
+            $handler = DataHandler::getInstance();
+        }
+        $this->_dataHandler = $handler;
+        return $this;
+    }
+
+    /**
+     * Gets the data handler
+     * 
+     * @return \Pheanstalk\Datahandler
+     */
+    public function getDataHandler()
+    {
+        return $this->_dataHandler;
     }
 
     /**
@@ -174,7 +201,7 @@ class Pheanstalk implements PheanstalkInterface
             new Command\PeekCommand($jobId)
         );
 
-        return new Job($response['id'], $response['jobdata']);
+        return new Job($response['id'], $response['jobdata'], $this);
     }
 
     /**
@@ -190,7 +217,7 @@ class Pheanstalk implements PheanstalkInterface
             new Command\PeekCommand(Command\PeekCommand::TYPE_READY)
         );
 
-        return new Job($response['id'], $response['jobdata']);
+        return new Job($response['id'], $response['jobdata'], $this);
     }
 
     /**
@@ -206,7 +233,7 @@ class Pheanstalk implements PheanstalkInterface
             new Command\PeekCommand(Command\PeekCommand::TYPE_DELAYED)
         );
 
-        return new Job($response['id'], $response['jobdata']);
+        return new Job($response['id'], $response['jobdata'], $this);
     }
 
     /**
@@ -222,7 +249,7 @@ class Pheanstalk implements PheanstalkInterface
             new Command\PeekCommand(Command\PeekCommand::TYPE_BURIED)
         );
 
-        return new Job($response['id'], $response['jobdata']);
+        return new Job($response['id'], $response['jobdata'], $this);
     }
 
     /**
@@ -288,7 +315,7 @@ class Pheanstalk implements PheanstalkInterface
         if (in_array($response->getResponseName(), $falseResponses)) {
             return false;
         } else {
-            return new Job($response['id'], $response['jobdata']);
+            return new Job($response['id'], $response['jobdata'], $this);
         }
     }
 
@@ -376,8 +403,6 @@ class Pheanstalk implements PheanstalkInterface
 
         return $this;
     }
-
-    // ----------------------------------------
 
     /**
      * Dispatches the specified command to the connection object.
