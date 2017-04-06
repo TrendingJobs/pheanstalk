@@ -31,7 +31,7 @@ class Pheanstalk implements PheanstalkInterface
      */
     public function __construct($host, $port = PheanstalkInterface::DEFAULT_PORT, $connectTimeout = null, $connectPersistent = false, DataHander $handler = null)
     {
-        $this->setsetConnection(new Connection($host, $port, $connectTimeout, $connectPersistent));
+        $this->setConnection(new Connection($host, $port, $connectTimeout, $connectPersistent));
         $this->setDataHandler($handler);
     }
 
@@ -95,6 +95,10 @@ class Pheanstalk implements PheanstalkInterface
     {
         $this->_dispatch(new Command\DeleteCommand($job));
 
+        foreach ($this->getDataHandler()->getList() as $handler) {
+            $handler->expire($job);
+        }
+        
         return $this;
     }
 
@@ -261,6 +265,11 @@ class Pheanstalk implements PheanstalkInterface
         $delay = PheanstalkInterface::DEFAULT_DELAY,
         $ttr = PheanstalkInterface::DEFAULT_TTR
     ) {
+
+        foreach ($this->getDataHandler()->getList() as $handler) {
+            $data = $handler->encode($data);
+        }
+
         $response = $this->_dispatch(
             new Command\PutCommand($data, $priority, $delay, $ttr)
         );

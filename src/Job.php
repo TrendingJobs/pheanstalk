@@ -32,6 +32,7 @@ class Job
         foreach ($this->_pheanstalk->getDataHandler()->getList() as $handler) {
             $data = $handler->encode($data);
         }
+
         $this->_data = $data;
     }
 
@@ -52,11 +53,28 @@ class Job
      */
     public function getData()
     {
-        $data = $this->_data;
-        foreach (array_reverse($this->_pheanstalk->getDataHandler()->getList()) as $handler) {
+        $data = $this->getRawData();
+
+        $handlers = [];
+        foreach ($this->_pheanstalk->getDataHandler()->getList() as $handler) {
+            array_unshift($handlers, $handler);
+        }
+
+        foreach ($handlers as $handler) {
             $data = $handler->decode($data);
         }
+
         return $data;
+    }
+
+    /**
+     * Retrieves the raw job data
+     *
+     * @return string
+     */
+    public function getRawData()
+    {
+        return $this->_data;
     }
 
 }

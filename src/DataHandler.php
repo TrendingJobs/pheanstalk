@@ -29,6 +29,8 @@ class DataHandler {
         if (!self::$_instance) {
             self::$_instance = new self;
         }
+
+        return self::$_instance;
     }
 
      /**
@@ -41,8 +43,8 @@ class DataHandler {
      */
     public function attach(DataHandlerInterface $dataHandler)
     {
-        $this->getDataHandlers()->attach($dataHandler);
-        return self;
+        $this->getList()->attach($dataHandler);
+        return $this;
     }
 
     /**
@@ -55,8 +57,8 @@ class DataHandler {
      */
     public function detach(DataHandlerInterface $dataHandler)
     {
-        $this->getDataHandlers()->detach($dataHandler);
-        return self;
+        $this->getList()->detach($dataHandler);
+        return $this;
     }
 
     /**
