@@ -15,5 +15,5 @@ namespace Pheanstalk;
 interface DataHandlerInterface {
     public function encode($data);
     public function decode($data);
-    public function isAvailable();
+    public function isAvailable(Job $job);
 }

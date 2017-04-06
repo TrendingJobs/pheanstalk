@@ -18,7 +18,7 @@ class Job
 
     private $_id;
     private $_data;
-    private $_dataHandler;
+    static private $_dataHandler = [];
 
     /**
      * @param int    $id   The job ID
@@ -28,8 +28,10 @@ class Job
     {
         $this->_id = (int) $id;
 
-        if ($this->_dataHandler && $this->_dataHandler->isAvailable()) {
-            $data = $this->_dataHandler->encode($data);
+        foreach (self::$_dataHandler as $handler) {
+            if ($handler->isAvailable($this)) {
+                $data = $handler->encode($data);
+            }
         }
 
         $this->_data = $data;
@@ -54,8 +56,10 @@ class Job
     {
         $data = $this->_data;
 
-        if ($this->_dataHandler && $this->_dataHandler->isAvailable()) {
-            $data = $this->_dataHandler->decode($data);
+        foreach (array_reverse(self::$_dataHandler) as $handler) {
+            if ($handler->isAvailable($this)) {
+                $data = $handler->decode($data);
+            }
         }
         
         return $data;
@@ -71,6 +75,10 @@ class Job
      */
     static public function setDataHander(DataHandlerInterface $dataHandler)
     {
-        $this->_dataHandler = $dataHandler;
+        if (!self::$_dataHandler) {
+            self::$_dataHandler = new \SplObjectStorage;
+        }
+        
+        self::$_dataHandler->attach($dataHandler);
     }
 }
