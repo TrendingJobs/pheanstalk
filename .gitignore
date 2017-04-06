@@ -6,3 +6,4 @@ pheanstalk.phar
 
 # Composer installs dependencies here.
 vendor/
+/nbproject/private/

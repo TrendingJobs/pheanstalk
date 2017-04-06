@@ -1,5 +1,5 @@
 {
-    "name": "pda/pheanstalk",
+    "name": "trendingjobs/pheanstalk",
     "type": "library",
     "description": "PHP client for beanstalkd queue",
     "keywords": ["beanstalkd"],
@@ -11,6 +11,12 @@
             "email": "paul@annesley.cc",
             "homepage": "http://paul.annesley.cc/",
             "role": "Developer"
+        },
+        {
+            "name": "TrendingJobs",
+            "email": "stephan@trendingjobs.com",
+            "homepage": "http://trendingjobs.com/",
+            "role": "Developer" 
         }
     ],
     "require": {
@@ -26,7 +32,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.1-dev"
+            "dev-master": "3.2-dev"
         }
     }
 }
